@@ -6,8 +6,8 @@
  * This project uses @Incubating APIs which are subject to change.
  */
 
-rootProject.name = 'server'
-include 'services:auth-service'
-include 'services:user-service'
-include 'services:api-gateway'
-include 'libs:common'
+rootProject.name = "server"
+
+include("services:auth-service")
+include("services:user-service")
+include("services:api-gateway")
