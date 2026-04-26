@@ -5,3 +5,11 @@
  * Learn more about Gradle by exploring our Samples at https://docs.gradle.org/9.4.1/samples
  * This project uses @Incubating APIs which are subject to change.
  */
+plugins {
+    java
+}
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    }
+}
