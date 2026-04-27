@@ -3,15 +3,15 @@ spring:
         name: user-service
     docker:
       compose:
-        file: "../../compose.yaml"
+        enabled: false
     datasource:
         url: jdbc:postgresql://localhost:5432/user_db
         username: postgres
         password: password
 #         driver-class-name: org.postgresql.Driver
-#     jpa:
-#         hibernate:
-#             ddl-auto: update
+    jpa:
+        hibernate:
+            ddl-auto: update
 #         show-sql: false
 #         properties:
 #             hibernate:
