@@ -1,6 +1,9 @@
 spring:
     application:
         name: user-service
+    docker:
+      compose:
+        file: "../../compose.yaml"
     datasource:
         url: jdbc:postgresql://localhost:5432/user_db
         username: postgres

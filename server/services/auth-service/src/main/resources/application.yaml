@@ -1,6 +1,9 @@
 spring:
     application:
         name: auth-service
+    docker:
+      compose:
+        file: "../../compose.yaml"
     datasource:
         url: jdbc:postgresql://localhost:5433/auth_db
         username: postgres
