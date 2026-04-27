@@ -1,10 +1,70 @@
 services:
-  postgres:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-    volumes:
-      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
-    ports:
-      - "5432:5432"
+    # ── Infrastructure ──────────────────────────────────────────────────────────
+    postgres:
+        image: postgres:15-alpine
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: password
+        volumes:
+            - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+            - postgres-data:/var/lib/postgresql/data
+        ports:
+            - '5432:5432'
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U postgres']
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+    # ── Services ────────────────────────────────────────────────────────────────
+    auth-service:
+        build:
+            context: .
+            dockerfile: services/auth-service/Dockerfile
+        image: devops/auth-service:latest
+        ports:
+            - '8081:8081'
+        environment:
+            SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/auth_db
+            SPRING_DATASOURCE_USERNAME: postgres
+            SPRING_DATASOURCE_PASSWORD: password
+            SPRING_JPA_HIBERNATE_DDL_AUTO: update
+            JWT_SECRET: dGhpcyBpcyBhIHZlcnkgbG9uZyBzZWNyZXQga2V5IGZvciBkZXZlbG9wbWVudA==
+            JWT_EXPIRATION_MS: '86400000'
+        depends_on:
+            postgres:
+                condition: service_healthy
+
+    user-service:
+        build:
+            context: .
+            dockerfile: services/user-service/Dockerfile
+        image: devops/user-service:latest
+        ports:
+            - '8082:8082'
+        environment:
+            SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/user_db
+            SPRING_DATASOURCE_USERNAME: postgres
+            SPRING_DATASOURCE_PASSWORD: password
+            SPRING_JPA_HIBERNATE_DDL_AUTO: update
+            JWT_SECRET: dGhpcyBpcyBhIHZlcnkgbG9uZyBzZWNyZXQga2V5IGZvciBkZXZlbG9wbWVudA==
+        depends_on:
+            postgres:
+                condition: service_healthy
+
+    api-gateway:
+        build:
+            context: .
+            dockerfile: services/api-gateway/Dockerfile
+        image: devops/api-gateway:latest
+        ports:
+            - '8080:8080'
+        environment:
+            SERVICES_AUTH_SERVICE_URL: http://auth-service:8081
+            SERVICES_USER_SERVICE_URL: http://user-service:8082
+        depends_on:
+            - auth-service
+            - user-service
+
+volumes:
+    postgres-data:

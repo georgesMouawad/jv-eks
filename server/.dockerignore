@@ -1,0 +1,26 @@
+# Gradle caches and outputs
+**/.gradle/
+**/build/
+**/out/
+
+# Keep gradle wrapper jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Docs
+*.md
+
+# Service-level compose files (not needed in Docker build)
+services/**/compose.yaml
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Environment
+.env
