@@ -1,0 +1,23 @@
+# Strategic merge patch — overrides the Ingress host for the dev environment.
+# Replace <INGRESS_HOST> with the hostname or the NLB DNS name from:
+#   kubectl get ingress -n jv-eks api-gateway-ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    name: api-gateway-ingress
+    namespace: jv-eks
+    annotations:
+        traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+    ingressClassName: traefik
+    rules:
+        - host: api.jv-eks.dev
+          http:
+              paths:
+                  - path: /
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: api-gateway
+                            port:
+                                number: 8080

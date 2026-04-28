@@ -1,0 +1,38 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+    - ../../base
+
+# ── Image overrides — replace placeholder names with full ECR URLs ────────────
+# Replace <ACCOUNT_ID> with your AWS account ID after `tofu apply`
+images:
+    - name: auth-service
+      newName: <ACCOUNT_ID>.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-dev/auth-service
+      newTag: latest
+    - name: user-service
+      newName: <ACCOUNT_ID>.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-dev/user-service
+      newTag: latest
+    - name: api-gateway
+      newName: <ACCOUNT_ID>.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-dev/api-gateway
+      newTag: latest
+
+# ── Secrets — copy secrets/*.env.example → secrets/*.env and fill values ──────
+# The actual .env files are gitignored.
+secretGenerator:
+    - name: db-secret
+      envs:
+          - secrets/db.env
+      options:
+          disableNameSuffixHash: true
+    - name: jwt-secret
+      envs:
+          - secrets/jwt.env
+      options:
+          disableNameSuffixHash: true
+
+# ── Patches — environment-specific ConfigMap values and Ingress host ──────────
+patches:
+    - path: patches/auth-service-configmap.yaml
+    - path: patches/user-service-configmap.yaml
+    - path: patches/api-gateway-ingress.yaml
