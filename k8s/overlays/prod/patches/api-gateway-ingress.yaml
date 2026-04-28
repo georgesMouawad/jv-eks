@@ -1,0 +1,21 @@
+# Strategic merge patch — prod ingress host.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    name: api-gateway-ingress
+    namespace: jv-eks
+    annotations:
+        traefik.ingress.kubernetes.io/router.entrypoints: web
+spec:
+    ingressClassName: traefik
+    rules:
+        - host: api.jv-eks.prod
+          http:
+              paths:
+                  - path: /
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: api-gateway
+                            port:
+                                number: 8080

@@ -1,0 +1,39 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: jv-eks
+
+resources:
+    - ../../base
+
+# ── Image overrides — set by the deploy workflow via `kustomize edit set image` ──
+# Placeholders below; the CI/CD pipeline replaces them with the full ECR URL + SHA.
+images:
+    - name: auth-service
+      newName: <ACCOUNT_ID_PROD>.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-prod/auth-service
+      newTag: latest
+    - name: user-service
+      newName: <ACCOUNT_ID_PROD>.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-prod/user-service
+      newTag: latest
+    - name: api-gateway
+      newName: <ACCOUNT_ID_PROD>.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-prod/api-gateway
+      newTag: latest
+
+# ── Secrets — created by the deploy workflow from GitHub environment secrets ──
+secretGenerator:
+    - name: db-secret
+      envs:
+          - secrets/db.env
+      options:
+          disableNameSuffixHash: true
+    - name: jwt-secret
+      envs:
+          - secrets/jwt.env
+      options:
+          disableNameSuffixHash: true
+
+# ── Patches ───────────────────────────────────────────────────────────────────
+patches:
+    - path: patches/auth-service-configmap.yaml
+    - path: patches/user-service-configmap.yaml
+    - path: patches/api-gateway-ingress.yaml

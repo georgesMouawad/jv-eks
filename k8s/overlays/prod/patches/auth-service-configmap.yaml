@@ -1,0 +1,11 @@
+# Strategic merge patch — prod RDS endpoint.
+# Replace <RDS_ENDPOINT_PROD> with the prod RDS hostname (strip the :5432 suffix).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: auth-service-config
+    namespace: jv-eks
+data:
+    SPRING_DATASOURCE_URL: jdbc:postgresql://<RDS_ENDPOINT_PROD>:5432/auth_db
+    SPRING_DATASOURCE_USERNAME: postgres
+    DB_HOST: <RDS_ENDPOINT_PROD>
