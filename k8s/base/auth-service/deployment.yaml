@@ -12,6 +12,38 @@ spec:
             labels:
                 app: auth-service
         spec:
+            initContainers:
+                - name: create-db
+                  image: postgres:15-alpine
+                  command:
+                      - sh
+                      - -c
+                      - |
+                          until pg_isready -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER"; do
+                            echo "Waiting for PostgreSQL..."; sleep 2;
+                          done
+                          psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -tc \
+                            "SELECT 1 FROM pg_database WHERE datname='auth_db'" \
+                            | grep -q 1 || psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" \
+                            -c "CREATE DATABASE auth_db"
+                  env:
+                      - name: DB_HOST
+                        valueFrom:
+                            configMapKeyRef:
+                                name: auth-service-config
+                                key: DB_HOST
+                      - name: DB_PORT
+                        value: '5432'
+                      - name: DB_USER
+                        valueFrom:
+                            configMapKeyRef:
+                                name: auth-service-config
+                                key: SPRING_DATASOURCE_USERNAME
+                      - name: PGPASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: db-secret
+                                key: SPRING_DATASOURCE_PASSWORD
             containers:
                 - name: auth-service
                   image: auth-service:latest

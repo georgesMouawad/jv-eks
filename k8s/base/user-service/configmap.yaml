@@ -12,3 +12,4 @@ data:
     # Overridden per environment in overlays
     SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/user_db
     SPRING_DATASOURCE_USERNAME: postgres
+    DB_HOST: localhost

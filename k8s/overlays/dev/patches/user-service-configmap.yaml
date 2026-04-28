@@ -8,3 +8,4 @@ metadata:
 data:
     SPRING_DATASOURCE_URL: jdbc:postgresql://<RDS_ENDPOINT>:5432/user_db
     SPRING_DATASOURCE_USERNAME: postgres
+    DB_HOST: <RDS_ENDPOINT>
