@@ -59,3 +59,73 @@ module "ecr" {
   service_names         = ["auth-service", "user-service", "api-gateway"]
   image_retention_count = var.ecr_image_retention_count
 }
+
+# ── Traefik ingress controller ────────────────────────────────────────────────
+# Installed into the EKS cluster once via Helm. The helm provider authenticates
+# using the same kubeconfig that the aws provider resolves via eks:DescribeCluster.
+provider "helm" {
+  kubernetes {
+    host                   = module.eks.cluster_endpoint
+    cluster_ca_certificate = base64decode(module.eks.cluster_ca_certificate)
+    exec {
+      api_version = "client.authentication.k8s.io/v1beta1"
+      command     = "aws"
+      args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name, "--region", var.aws_region]
+    }
+  }
+}
+
+resource "helm_release" "traefik" {
+  name             = "traefik"
+  repository       = "https://traefik.github.io/charts"
+  chart            = "traefik"
+  version          = "34.4.1"
+  namespace        = "kube-system"
+  create_namespace = false
+
+  set {
+    name  = "ingressClass.enabled"
+    value = "true"
+  }
+  set {
+    name  = "ingressClass.isDefaultClass"
+    value = "true"
+  }
+  set {
+    name  = "service.type"
+    value = "LoadBalancer"
+  }
+
+  depends_on = [module.eks]
+}
+
+# ── Sealed Secrets controller ─────────────────────────────────────────────────
+# Decrypts SealedSecret resources committed to the repo using the controller's
+# private key, which never leaves the cluster.
+resource "helm_release" "sealed_secrets" {
+  name             = "sealed-secrets"
+  repository       = "https://bitnami-labs.github.io/sealed-secrets"
+  chart            = "sealed-secrets"
+  version          = "2.17.3"
+  namespace        = "kube-system"
+  create_namespace = false
+
+  depends_on = [module.eks]
+}
+
+# ── ArgoCD ────────────────────────────────────────────────────────────────────
+# GitOps controller. After `tofu apply`, bootstrap with:
+#   kubectl apply -f k8s/argocd/
+# Get the initial admin password:
+#   kubectl get secret argocd-initial-admin-secret -n argocd \
+#     -o jsonpath='{.data.password}' | base64 -d
+resource "helm_release" "argocd" {
+  name             = "argocd"
+  repository       = "https://argoproj.github.io/argo-helm"
+  chart            = "argo-cd"
+  version          = "7.8.26"
+  namespace        = "argocd"
+  create_namespace = true
+
+  depends_on = [module.eks]
+}
