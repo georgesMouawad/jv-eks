@@ -11,10 +11,24 @@ ENV="dev"
 OVERLAY="${REPO_ROOT}/k8s/overlays/${ENV}"
 CERTS_DIR="${REPO_ROOT}/k8s/certs"
 
+require_cmd() {
+  if ! command -v "$1" >/dev/null 2>&1; then
+    echo "Error: required command '$1' is not installed or not in PATH." >&2
+    exit 1
+  fi
+}
+
+echo "==> Checking prerequisites..."
+require_cmd tofu
+require_cmd aws
+require_cmd kubectl
+require_cmd kubeseal
+require_cmd git
+
 # ── 1. Resolve Tofu outputs ───────────────────────────────────────────────────
 echo "==> Reading Tofu outputs..."
 cd "${REPO_ROOT}/infra/tofu"
-ACCOUNT_ID=$(tofu output -raw ecr_repository_urls | grep -oP '^\d+' | head -1)
+ACCOUNT_ID=$(tofu output -raw github_actions_role_arn | cut -d: -f5)
 RDS_ENDPOINT=$(tofu output -raw rds_endpoint | sed 's/:5432//')
 CLUSTER_NAME=$(tofu output -raw eks_cluster_name)
 AWS_REGION=$(tofu output -raw aws_region)
@@ -26,9 +40,6 @@ echo "    CLUSTER_NAME = ${CLUSTER_NAME}"
 # ── 1b. Configure local kubeconfig ───────────────────────────────────────────
 echo "==> Updating kubeconfig..."
 aws eks update-kubeconfig --name "${CLUSTER_NAME}" --region "${AWS_REGION}"
-
-echo "    ACCOUNT_ID  = ${ACCOUNT_ID}"
-echo "    RDS_ENDPOINT = ${RDS_ENDPOINT}"
 
 # ── 2. Patch permanent (non-sensitive) values in the overlay ──────────────────
 echo "==> Patching overlay with permanent values..."
@@ -86,8 +97,12 @@ git add \
   k8s/overlays/dev/sealed-secrets/jwt-secret.yaml \
   k8s/certs/sealed-secrets-dev.pem
 
-git commit -m "chore: bootstrap dev environment [skip ci]"
-git push
+if git diff --cached --quiet; then
+  echo "    No file changes to commit."
+else
+  git commit -m "chore: bootstrap dev environment [skip ci]"
+  git push
+fi
 
 # ── 6. Bootstrap ArgoCD ───────────────────────────────────────────────────────
 echo ""

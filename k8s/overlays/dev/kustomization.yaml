@@ -10,7 +10,8 @@ resources:
     - sealed-secrets/db-secret.yaml
     - sealed-secrets/jwt-secret.yaml
 
-    # ── Patches
+# ── Patches — environment-specific ConfigMap values and Ingress host ──────────
+images:
     - name: auth-service
       newName: <ACCOUNT_ID>.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-dev/auth-service
       newTag: latest
