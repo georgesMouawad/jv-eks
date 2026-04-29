@@ -30,6 +30,11 @@ output "eks_kubeconfig_command" {
   value       = "aws eks update-kubeconfig --name ${module.eks.cluster_name} --region ${var.aws_region}"
 }
 
+output "aws_region" {
+  description = "AWS region where resources are deployed."
+  value       = var.aws_region
+}
+
 # ── RDS ──────────────────────────────────────────────────────────────────────
 output "rds_endpoint" {
   description = "Connection endpoint for the RDS instance."

@@ -16,6 +16,16 @@ echo "==> Reading Tofu outputs..."
 cd "${REPO_ROOT}/infra/tofu"
 ACCOUNT_ID=$(tofu output -raw ecr_repository_urls | grep -oP '^\d+' | head -1)
 RDS_ENDPOINT=$(tofu output -raw rds_endpoint | sed 's/:5432//')
+CLUSTER_NAME=$(tofu output -raw eks_cluster_name)
+AWS_REGION=$(tofu output -raw aws_region)
+
+echo "    ACCOUNT_ID   = ${ACCOUNT_ID}"
+echo "    RDS_ENDPOINT = ${RDS_ENDPOINT}"
+echo "    CLUSTER_NAME = ${CLUSTER_NAME}"
+
+# ── 1b. Configure local kubeconfig ───────────────────────────────────────────
+echo "==> Updating kubeconfig..."
+aws eks update-kubeconfig --name "${CLUSTER_NAME}" --region "${AWS_REGION}"
 
 echo "    ACCOUNT_ID  = ${ACCOUNT_ID}"
 echo "    RDS_ENDPOINT = ${RDS_ENDPOINT}"
