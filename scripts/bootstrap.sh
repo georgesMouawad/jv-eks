@@ -28,7 +28,7 @@ require_cmd git
 # ── 1. Resolve Tofu outputs ───────────────────────────────────────────────────
 echo "==> Reading Tofu outputs..."
 cd "${REPO_ROOT}/infra/tofu"
-ACCOUNT_ID=$(tofu output -raw github_actions_role_arn | cut -d: -f5)
+ACCOUNT_ID=$(tofu output -raw aws_account_id)
 RDS_ENDPOINT=$(tofu output -raw rds_endpoint | sed 's/:5432//')
 CLUSTER_NAME=$(tofu output -raw eks_cluster_name)
 AWS_REGION=$(tofu output -raw aws_region)
