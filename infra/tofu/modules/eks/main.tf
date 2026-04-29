@@ -102,3 +102,27 @@ resource "aws_eks_node_group" "this" {
   tags = { Name = "${var.name_prefix}-node-group" }
 }
 
+# ── GitHub Actions EKS access ─────────────────────────────────────────────────
+# Grants the GitHub Actions deployer role cluster-admin access via the EKS
+# access entry API (replaces the legacy aws-auth ConfigMap approach).
+
+resource "aws_eks_access_entry" "github_actions" {
+  cluster_name  = aws_eks_cluster.this.name
+  principal_arn = var.github_actions_role_arn
+  type          = "STANDARD"
+
+  tags = { Name = "${var.name_prefix}-github-actions-access" }
+}
+
+resource "aws_eks_access_policy_association" "github_actions_admin" {
+  cluster_name  = aws_eks_cluster.this.name
+  principal_arn = var.github_actions_role_arn
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+
+  access_scope {
+    type = "cluster"
+  }
+
+  depends_on = [aws_eks_access_entry.github_actions]
+}
+

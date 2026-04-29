@@ -13,17 +13,27 @@ module "vpc" {
   availability_zones   = var.availability_zones
 }
 
+# ── IAM (GitHub Actions OIDC + deployer role) ────────────────────────────────
+module "iam" {
+  source = "./modules/iam"
+
+  name_prefix = local.name_prefix
+  github_org  = var.github_org
+  github_repo = var.github_repo
+}
+
 # ── EKS ──────────────────────────────────────────────────────────────────────
 module "eks" {
   source = "./modules/eks"
 
-  name_prefix            = local.name_prefix
-  kubernetes_version     = var.eks_kubernetes_version
-  private_subnet_ids     = module.vpc.private_subnet_ids
-  node_instance_types    = var.eks_node_instance_types
-  node_desired           = var.eks_node_desired
-  node_min               = var.eks_node_min
-  node_max               = var.eks_node_max
+  name_prefix             = local.name_prefix
+  kubernetes_version      = var.eks_kubernetes_version
+  private_subnet_ids      = module.vpc.private_subnet_ids
+  node_instance_types     = var.eks_node_instance_types
+  node_desired            = var.eks_node_desired
+  node_min                = var.eks_node_min
+  node_max                = var.eks_node_max
+  github_actions_role_arn = module.iam.github_actions_role_arn
 }
 
 # ── RDS ──────────────────────────────────────────────────────────────────────

@@ -73,6 +73,16 @@ variable "eks_node_max" {
   default     = 1
 }
 
+variable "github_org" {
+  description = "GitHub organisation or username that owns the repository."
+  type        = string
+}
+
+variable "github_repo" {
+  description = "GitHub repository name (without the org prefix)."
+  type        = string
+}
+
 # ── RDS ──────────────────────────────────────────────────────────────────────
 variable "rds_instance_class" {
   description = "RDS instance class."

@@ -10,6 +10,9 @@ private_subnet_cidrs = ["10.0.11.0/24", "10.0.12.0/24"]
 availability_zones   = ["eu-central-1a", "eu-central-1b"]
 
 # ── EKS ──────────────────────────────────────────────────────────────────────
+github_org  = "georgesMouawad"
+github_repo = "jv-eks"
+
 eks_kubernetes_version  = "1.33"
 eks_node_instance_types = ["t3a.medium"] # multiple types improves spot availability
 eks_node_desired        = 1

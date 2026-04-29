@@ -46,3 +46,9 @@ output "ecr_repository_urls" {
   description = "Map of service name to ECR repository URL."
   value       = module.ecr.repository_urls
 }
+
+# ── IAM ──────────────────────────────────────────────────────────────────────
+output "github_actions_role_arn" {
+  description = "ARN of the GitHub Actions deployer role. Set this as the AWS_ROLE_ARN secret in GitHub."
+  value       = module.iam.github_actions_role_arn
+}

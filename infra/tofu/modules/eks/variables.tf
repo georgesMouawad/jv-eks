@@ -25,3 +25,8 @@ variable "node_min" {
 variable "node_max" {
   type = number
 }
+
+variable "github_actions_role_arn" {
+  description = "ARN of the IAM role assumed by GitHub Actions for EKS deployments."
+  type        = string
+}
