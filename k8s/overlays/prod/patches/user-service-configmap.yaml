@@ -1,5 +1,4 @@
 # Strategic merge patch — prod RDS endpoint.
-# Replace <RDS_ENDPOINT_PROD> with the prod RDS hostname (strip the :5432 suffix).
 apiVersion: v1
 kind: ConfigMap
 metadata:
