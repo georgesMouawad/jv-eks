@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+    name: jv-eks-dev
+    namespace: argocd
+    finalizers:
+        - resources-finalizer.argocd.argoproj.io
+spec:
+    project: default
+    source:
+        repoURL: https://github.com/GMoua/jv-eks
+        targetRevision: main
+        path: k8s/overlays/dev
+    destination:
+        server: https://kubernetes.default.svc
+        namespace: jv-eks
+    syncPolicy:
+        automated:
+            prune: true # remove resources deleted from git
+            selfHeal: true # revert manual kubectl changes
+        syncOptions:
+            - CreateNamespace=true
+            - ServerSideApply=true

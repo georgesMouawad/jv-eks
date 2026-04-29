@@ -3,12 +3,14 @@ kind: Kustomization
 
 namespace: jv-eks
 
+# ── Secrets (Sealed Secrets) — generated once with kubeseal, safe to commit ──
+# See sealed-secrets/*.yaml for generation instructions.
 resources:
     - ../../base
+    - sealed-secrets/db-secret.yaml
+    - sealed-secrets/jwt-secret.yaml
 
-# ── Image overrides — replace placeholder names with full ECR URLs ────────────
-# Replace <ACCOUNT_ID> with your AWS account ID after `tofu apply`
-images:
+    # ── Patches
     - name: auth-service
       newName: <ACCOUNT_ID>.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-dev/auth-service
       newTag: latest
@@ -18,20 +20,6 @@ images:
     - name: api-gateway
       newName: <ACCOUNT_ID>.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-dev/api-gateway
       newTag: latest
-
-# ── Secrets — copy secrets/*.env.example → secrets/*.env and fill values ──────
-# The actual .env files are gitignored.
-secretGenerator:
-    - name: db-secret
-      envs:
-          - secrets/db.env
-      options:
-          disableNameSuffixHash: true
-    - name: jwt-secret
-      envs:
-          - secrets/jwt.env
-      options:
-          disableNameSuffixHash: true
 
 # ── Patches — environment-specific ConfigMap values and Ingress host ──────────
 patches:

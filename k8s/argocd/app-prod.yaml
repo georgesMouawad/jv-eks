@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+    name: jv-eks-prod
+    namespace: argocd
+    finalizers:
+        - resources-finalizer.argocd.argoproj.io
+spec:
+    project: default
+    source:
+        repoURL: https://github.com/GMoua/jv-eks
+        targetRevision: main
+        path: k8s/overlays/prod
+    destination:
+        server: https://kubernetes.default.svc
+        namespace: jv-eks
+    syncPolicy:
+        # No `automated` block — prod requires a manual sync click in the ArgoCD UI.
+        syncOptions:
+            - CreateNamespace=true
+            - ServerSideApply=true
