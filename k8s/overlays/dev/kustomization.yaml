@@ -13,13 +13,13 @@ resources:
 # ── Patches — environment-specific ConfigMap values and Ingress host ──────────
 images:
     - name: auth-service
-      newName: <ACCOUNT_ID>.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-dev/auth-service
+      newName: 648597472109.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-dev/auth-service
       newTag: latest
     - name: user-service
-      newName: <ACCOUNT_ID>.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-dev/user-service
+      newName: 648597472109.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-dev/user-service
       newTag: latest
     - name: api-gateway
-      newName: <ACCOUNT_ID>.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-dev/api-gateway
+      newName: 648597472109.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-dev/api-gateway
       newTag: latest
 
 # ── Patches — environment-specific ConfigMap values and Ingress host ──────────

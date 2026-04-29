@@ -1,11 +1,11 @@
 # Strategic merge patch — adds/overrides keys in the base ConfigMap.
-# Replace <RDS_ENDPOINT> with the value from `tofu output rds_endpoint` (strip the :5432 port suffix).
+# Replace jv-eks-dev-postgres.clm4y422ao00.eu-central-1.rds.amazonaws.com with the value from `tofu output rds_endpoint` (strip the :5432 port suffix).
 apiVersion: v1
 kind: ConfigMap
 metadata:
     name: auth-service-config
     namespace: jv-eks
 data:
-    SPRING_DATASOURCE_URL: jdbc:postgresql://<RDS_ENDPOINT>:5432/auth_db
+    SPRING_DATASOURCE_URL: jdbc:postgresql://jv-eks-dev-postgres.clm4y422ao00.eu-central-1.rds.amazonaws.com:5432/auth_db
     SPRING_DATASOURCE_USERNAME: postgres
-    DB_HOST: <RDS_ENDPOINT>
+    DB_HOST: jv-eks-dev-postgres.clm4y422ao00.eu-central-1.rds.amazonaws.com
