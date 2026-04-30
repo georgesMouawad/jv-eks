@@ -1,0 +1,178 @@
+direction: right
+
+title: {
+  label: AWS Infrastructure — jv-eks (eu-central-1)
+  near: top-center
+  style.font-size: 18
+  style.bold: true
+}
+
+aws: AWS Account {
+  style.fill: "#F0F4FF"
+  style.stroke: "#3B5BDB"
+
+  vpc: VPC 10.0.0.0/16 {
+    style.fill: "#EEF2FF"
+    style.stroke: "#4C6EF5"
+
+    public: Public Subnets {
+      style.fill: "#E3F2FD"
+      style.stroke: "#1E88E5"
+      style.font-size: 12
+
+      igw: Internet Gateway {
+        shape: hexagon
+        style.fill: "#BBDEFB"
+      }
+      nat: NAT Gateway {
+        shape: hexagon
+        style.fill: "#BBDEFB"
+      }
+      nlb: Network Load Balancer\n(Traefik) {
+        shape: hexagon
+        style.fill: "#BBDEFB"
+      }
+    }
+
+    private: Private Subnets {
+      style.fill: "#F3E5F5"
+      style.stroke: "#8E24AA"
+      style.font-size: 12
+
+      eks: EKS Cluster (K8s 1.33) {
+        style.fill: "#EDE7F6"
+        style.stroke: "#673AB7"
+
+        nodes: Node Group\nt3a.medium SPOT (1–2 nodes) {
+          shape: rectangle
+          style.fill: "#D1C4E9"
+        }
+
+        sys: kube-system {
+          style.fill: "#E8EAF6"
+          traefik: Traefik\nIngress Controller {
+            shape: rectangle
+          }
+          ss: Sealed Secrets\nController {
+            shape: rectangle
+          }
+          ms: Metrics Server {
+            shape: rectangle
+          }
+        }
+
+        app: jv-eks namespace {
+          style.fill: "#E8F5E9"
+          gw: API Gateway\n:8080\nHPA (1-3) {
+            shape: rectangle
+            style.fill: "#C8E6C9"
+          }
+          auth: Auth Service\n:8081\nHPA (1-4) {
+            shape: rectangle
+            style.fill: "#C8E6C9"
+          }
+          user: User Service\n:8082\nHPA (1-4) {
+            shape: rectangle
+            style.fill: "#C8E6C9"
+          }
+        }
+
+        gitops: argocd namespace {
+          style.fill: "#FFF8E1"
+          argocd: ArgoCD {
+            shape: rectangle
+            style.fill: "#FFECB3"
+          }
+        }
+
+        obs: monitoring namespace {
+          style.fill: "#FBE9E7"
+          prom: Prometheus {
+            shape: rectangle
+            style.fill: "#FFCCBC"
+          }
+          grafana: Grafana {
+            shape: rectangle
+            style.fill: "#FFCCBC"
+          }
+          alert: Alertmanager {
+            shape: rectangle
+            style.fill: "#FFCCBC"
+          }
+        }
+      }
+
+      rds: RDS PostgreSQL 16\ndb.t3.micro\nEncrypted gp3 {
+        shape: cylinder
+        style.fill: "#FFF3E0"
+        style.stroke: "#FB8C00"
+      }
+    }
+  }
+
+  ecr: ECR Repositories {
+    style.fill: "#E8F5E9"
+    style.stroke: "#43A047"
+    label: "jv-eks-dev/auth-service\njv-eks-dev/user-service\njv-eks-dev/api-gateway\n(retention: 3 images)"
+  }
+
+  iam: IAM {
+    style.fill: "#FCE4EC"
+    style.stroke: "#E91E63"
+    oidc: OIDC Provider\ntoken.actions.githubusercontent.com {
+      shape: rectangle
+    }
+    role: github-actions-deployer\n(ECR PowerUser +\nEKS cluster-admin) {
+      shape: rectangle
+    }
+  }
+}
+
+github: GitHub {
+  style.fill: "#F5F5F5"
+  style.stroke: "#424242"
+  repo: georgesMouawad/jv-eks\n(source + k8s manifests) {
+    shape: rectangle
+  }
+  ci: GitHub Actions {
+    shape: rectangle
+    style.fill: "#E0E0E0"
+  }
+}
+
+internet: Internet {
+  shape: cloud
+  style.fill: "#E3F2FD"
+}
+
+# Traffic
+internet -> aws.vpc.public.nlb: HTTPS/HTTP
+aws.vpc.public.nlb -> aws.vpc.private.eks.sys.traefik: forward
+aws.vpc.private.eks.sys.traefik -> aws.vpc.private.eks.app.gw
+aws.vpc.private.eks.app.gw -> aws.vpc.private.eks.app.auth: /api/auth/**
+aws.vpc.private.eks.app.gw -> aws.vpc.private.eks.app.user: /api/users/**
+
+# DB
+aws.vpc.private.eks.app.auth -> aws.vpc.private.rds: JDBC 5432\n(auth_db)
+aws.vpc.private.eks.app.user -> aws.vpc.private.rds: JDBC 5432\n(user_db)
+
+# GitOps
+github.ci -> aws.ecr: docker push
+github.ci -> github.repo: commit newTag [skip ci]
+aws.vpc.private.eks.gitops.argocd -> github.repo: poll
+aws.vpc.private.eks.gitops.argocd -> aws.vpc.private.eks.app: sync manifests
+
+# Secrets
+aws.vpc.private.eks.sys.ss -> aws.vpc.private.eks.app.auth: decrypt SealedSecret
+aws.vpc.private.eks.sys.ss -> aws.vpc.private.eks.app.user: decrypt SealedSecret
+
+# Observability
+aws.vpc.private.eks.obs.prom -> aws.vpc.private.eks.app.auth: scrape :8081/actuator/prometheus
+aws.vpc.private.eks.obs.prom -> aws.vpc.private.eks.app.user: scrape :8082/actuator/prometheus
+aws.vpc.private.eks.obs.prom -> aws.vpc.private.eks.app.gw: scrape :8080/actuator/prometheus
+aws.vpc.private.eks.obs.grafana -> aws.vpc.private.eks.obs.prom: PromQL
+
+# CI OIDC
+github.ci -> aws.iam.oidc: AssumeRoleWithWebIdentity
+aws.iam.oidc -> aws.iam.role
+aws.iam.role -> aws.ecr: push
