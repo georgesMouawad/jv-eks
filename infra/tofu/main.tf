@@ -156,8 +156,8 @@ resource "helm_release" "kube_prometheus_stack" {
           # Discover ServiceMonitors in any namespace, not just those with the
           # Helm release label. Required to scrape our app services in jv-eks.
           serviceMonitorSelectorNilUsesHelmValues = false
-          serviceMonitorNamespaceSelector         = {}
-          serviceMonitorSelector                  = {}
+          serviceMonitorNamespaceSelector         = null
+          serviceMonitorSelector                  = null
         }
       }
       grafana = {
