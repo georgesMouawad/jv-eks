@@ -202,3 +202,31 @@ resource "helm_release" "metrics_server" {
 
   depends_on = [module.eks]
 }
+
+# ── S3: CrateSync audio assets ────────────────────────────────────────────────
+module "s3" {
+  source = "./modules/s3"
+
+  bucket_name          = "${local.name_prefix}-cratesync-audio-assets"
+  cors_allowed_origins = var.cratesync_cors_allowed_origins
+}
+
+# ── ElastiCache: Redis for CrateSync ─────────────────────────────────────────
+module "elasticache" {
+  source = "./modules/elasticache"
+
+  name_prefix        = local.name_prefix
+  vpc_id             = module.vpc.vpc_id
+  private_subnet_ids = module.vpc.private_subnet_ids
+  eks_node_sg_id     = module.eks.node_security_group_id
+  node_type          = var.elasticache_node_type
+}
+
+# ── IRSA: crate-service ServiceAccount ───────────────────────────────────────
+module "irsa_crate_service" {
+  source = "./modules/irsa-crate-service"
+
+  name_prefix             = local.name_prefix
+  oidc_issuer_url         = module.eks.oidc_issuer_url
+  audio_assets_bucket_arn = module.s3.bucket_arn
+}

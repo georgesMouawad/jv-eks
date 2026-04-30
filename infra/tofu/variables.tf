@@ -127,3 +127,17 @@ variable "ecr_image_retention_count" {
   type        = number
   default     = 10
 }
+
+# ── CrateSync S3 ─────────────────────────────────────────────────────────────
+variable "cratesync_cors_allowed_origins" {
+  description = "Origins allowed to PUT/GET audio assets via pre-signed URLs (e.g. Next.js frontend URL)."
+  type        = list(string)
+  default     = ["http://localhost:3000"]
+}
+
+# ── ElastiCache ───────────────────────────────────────────────────────────────
+variable "elasticache_node_type" {
+  description = "ElastiCache node type for the Redis cluster."
+  type        = string
+  default     = "cache.t3.micro"
+}

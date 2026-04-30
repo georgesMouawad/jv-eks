@@ -58,6 +58,34 @@ output "github_actions_role_arn" {
   value       = module.iam.github_actions_role_arn
 }
 
+# ── CrateSync S3 ─────────────────────────────────────────────────────────────
+output "cratesync_audio_assets_bucket" {
+  description = "Name of the S3 bucket for CrateSync audio assets."
+  value       = module.s3.bucket_name
+}
+
+output "cratesync_audio_assets_bucket_arn" {
+  description = "ARN of the S3 bucket for CrateSync audio assets."
+  value       = module.s3.bucket_arn
+}
+
+# ── ElastiCache ───────────────────────────────────────────────────────────────
+output "redis_endpoint" {
+  description = "DNS address of the ElastiCache Redis primary node."
+  value       = module.elasticache.redis_endpoint
+}
+
+output "redis_port" {
+  description = "Port of the ElastiCache Redis cluster."
+  value       = module.elasticache.redis_port
+}
+
+# ── IRSA ─────────────────────────────────────────────────────────────────────
+output "crate_service_irsa_role_arn" {
+  description = "IAM role ARN to annotate on the crate-service Kubernetes ServiceAccount."
+  value       = module.irsa_crate_service.role_arn
+}
+
 output "aws_account_id" {
   description = "AWS account ID."
   value       = data.aws_caller_identity.current.account_id

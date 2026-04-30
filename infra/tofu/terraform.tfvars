@@ -31,3 +31,10 @@ rds_username          = "postgres"
 
 # ── ECR ──────────────────────────────────────────────────────────────────────
 ecr_image_retention_count = 3
+
+# ── CrateSync S3 ─────────────────────────────────────────────────────────────
+# Override with your production frontend URL before deploying to prod.
+cratesync_cors_allowed_origins = ["http://localhost:3000"]
+
+# ── ElastiCache ───────────────────────────────────────────────────────────────
+elasticache_node_type = "cache.t3.micro"
