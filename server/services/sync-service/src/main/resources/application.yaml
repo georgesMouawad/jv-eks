@@ -1,0 +1,20 @@
+spring:
+    application:
+        name: sync-service
+    data:
+        redis:
+            host: localhost
+            port: 6379
+
+server:
+    port: 8084
+
+management:
+    endpoints:
+        web:
+            exposure:
+                include: health,prometheus
+    endpoint:
+        health:
+            probes:
+                enabled: true
