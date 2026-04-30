@@ -1,4 +1,4 @@
-package com.devops.user.services.user_service.infrastructure.security;
+package com.devops.common.security;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,6 +19,15 @@ public class JwtAuthentication extends AbstractAuthenticationToken {
         this.userId = userId;
         this.email = email;
         setAuthenticated(true);
+    }
+
+    /**
+     * Returns the userId string so that {@code auth.getName()} works in
+     * controllers.
+     */
+    @Override
+    public String getName() {
+        return userId.toString();
     }
 
     @Override

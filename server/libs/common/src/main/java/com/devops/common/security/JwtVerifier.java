@@ -1,23 +1,27 @@
-package com.devops.user.services.user_service.infrastructure.security;
+package com.devops.common.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Base64;
 import java.util.UUID;
 
-@Service
-public class JwtService {
+/**
+ * Read-only JWT utility — verifies and parses tokens issued by auth-service.
+ * Not a Spring component; instantiate it explicitly as a @Bean in each
+ * service's
+ * SecurityConfig to avoid a name conflict with auth-service's token-generation
+ * service.
+ */
+public class JwtVerifier {
 
     private final SecretKey signingKey;
 
-    public JwtService(@Value("${jwt.secret}") String secret) {
-        byte[] keyBytes = Base64.getDecoder().decode(secret);
+    public JwtVerifier(String base64Secret) {
+        byte[] keyBytes = Base64.getDecoder().decode(base64Secret);
         this.signingKey = Keys.hmacShaKeyFor(keyBytes);
     }
 

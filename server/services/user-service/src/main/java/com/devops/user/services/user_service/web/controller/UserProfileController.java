@@ -4,7 +4,7 @@ import com.devops.user.services.user_service.application.dto.CreateUserProfileRe
 import com.devops.user.services.user_service.application.dto.UpdateUserProfileRequest;
 import com.devops.user.services.user_service.application.dto.UserProfileResponse;
 import com.devops.user.services.user_service.application.port.in.UserProfileUseCase;
-import com.devops.user.services.user_service.infrastructure.security.JwtAuthentication;
+import com.devops.common.security.JwtAuthentication;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

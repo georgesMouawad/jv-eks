@@ -1,5 +1,8 @@
 package com.devops.crate.services.crate_service.infrastructure.security;
 
+import com.devops.common.security.JwtAuthenticationFilter;
+import com.devops.common.security.JwtVerifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,14 +15,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final JwtAuthFilter jwtAuthFilter;
-
-    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
-        this.jwtAuthFilter = jwtAuthFilter;
-    }
+    @Value("${jwt.secret}")
+    private String jwtSecret;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(new JwtVerifier(jwtSecret));
         return http
                 .csrf(csrf -> csrf.disable())
                 .formLogin(f -> f.disable())
@@ -28,7 +29,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/**").permitAll()
                         .anyRequest().authenticated())
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }

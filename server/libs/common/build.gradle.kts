@@ -27,6 +27,7 @@ dependencies {
     // on their own compile classpaths without re-declaring these deps.
     api("org.springframework.security:spring-security-web")
     api("org.springframework:spring-context")
+    compileOnly("jakarta.servlet:jakarta.servlet-api")
 
     // jjwt — only JwtService in this lib calls the API directly;
     // impl + jackson are runtimeOnly so they propagate to consuming services' runtime classpath.

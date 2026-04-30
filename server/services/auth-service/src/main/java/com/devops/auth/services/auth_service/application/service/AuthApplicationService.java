@@ -9,7 +9,7 @@ import com.devops.auth.services.auth_service.domain.exception.UserAlreadyExistsE
 import com.devops.auth.services.auth_service.domain.model.AppUser;
 import com.devops.auth.services.auth_service.domain.model.Role;
 import com.devops.auth.services.auth_service.domain.repository.AppUserRepository;
-import com.devops.auth.services.auth_service.infrastructure.security.JwtService;
+import com.devops.auth.services.auth_service.infrastructure.security.JwtIssuerService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,11 +20,11 @@ public class AuthApplicationService implements AuthUseCase {
 
     private final AppUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
+    private final JwtIssuerService jwtService;
 
     public AuthApplicationService(AppUserRepository userRepository,
-                                  PasswordEncoder passwordEncoder,
-                                  JwtService jwtService) {
+            PasswordEncoder passwordEncoder,
+            JwtIssuerService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
@@ -43,8 +43,7 @@ public class AuthApplicationService implements AuthUseCase {
                 request.username(),
                 request.email(),
                 passwordEncoder.encode(request.password()),
-                Role.USER
-        );
+                Role.USER);
 
         AppUser saved = userRepository.save(user);
         String token = jwtService.generateToken(saved);
@@ -55,8 +54,7 @@ public class AuthApplicationService implements AuthUseCase {
                 saved.getEmail(),
                 saved.getRole().name(),
                 token,
-                jwtService.getExpirationMs()
-        );
+                jwtService.getExpirationMs());
     }
 
     @Override
@@ -77,7 +75,6 @@ public class AuthApplicationService implements AuthUseCase {
                 user.getEmail(),
                 user.getRole().name(),
                 token,
-                jwtService.getExpirationMs()
-        );
+                jwtService.getExpirationMs());
     }
 }
