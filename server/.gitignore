@@ -6,3 +6,6 @@ build
 
 # Ignore Kotlin plugin data
 .kotlin
+
+# VS Code Java language server compiled output
+bin
