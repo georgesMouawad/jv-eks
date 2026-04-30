@@ -6,17 +6,17 @@ COPY gradlew settings.gradle.kts build.gradle.kts gradle.properties* ./
 COPY gradle/ gradle/
 RUN chmod +x gradlew && ./gradlew dependencies --no-daemon -q 2>/dev/null || true
 
-# Copy build files for ALL subprojects — root settings.gradle.kts includes all three,
-# so Gradle requires every declared project directory to exist at configuration time.
+# Copy build files for ALL subprojects — root settings.gradle.kts includes all
+# five, so Gradle requires every declared project directory to exist at config time.
 COPY services/auth-service/build.gradle.kts  ./services/auth-service/build.gradle.kts
 COPY services/user-service/build.gradle.kts  ./services/user-service/build.gradle.kts
 COPY services/api-gateway/build.gradle.kts   ./services/api-gateway/build.gradle.kts
 COPY services/crate-service/build.gradle.kts ./services/crate-service/build.gradle.kts
 COPY services/sync-service/build.gradle.kts  ./services/sync-service/build.gradle.kts
-COPY services/auth-service/src/ services/auth-service/src/
-RUN ./gradlew :services:auth-service:bootJar --no-daemon -x test
+COPY services/crate-service/src/ services/crate-service/src/
+RUN ./gradlew :services:crate-service:bootJar --no-daemon -x test
 
-# Build a minimal JRE containing only modules required by Spring Boot + JPA + Security
+# Build a minimal JRE containing modules required by Spring Boot + JPA + Security + AWS SDK
 RUN $JAVA_HOME/bin/jlink \
     --add-modules java.base,java.compiler,java.desktop,java.instrument,java.logging,java.management,java.management.rmi,java.naming,java.net.http,java.rmi,java.scripting,java.security.jgss,java.security.sasl,java.sql,java.xml,jdk.crypto.cryptoki,jdk.crypto.ec,jdk.jfr,jdk.management,jdk.management.agent,jdk.naming.dns,jdk.naming.rmi,jdk.unsupported,jdk.zipfs \
     --strip-debug \
@@ -30,7 +30,7 @@ FROM alpine:3.21 AS extractor
 COPY --from=builder /jre-minimal /opt/java
 ENV PATH="/opt/java/bin:$PATH"
 WORKDIR /app
-COPY --from=builder /app/services/auth-service/build/libs/*.jar app.jar
+COPY --from=builder /app/services/crate-service/build/libs/*.jar app.jar
 RUN java -Djarmode=tools -jar app.jar extract --layers --launcher --destination extracted
 
 # ── Stage 3: Minimal runtime image ───────────────────────────────────────────
@@ -51,7 +51,7 @@ COPY --from=extractor /app/extracted/spring-boot-loader/    ./
 COPY --from=extractor /app/extracted/snapshot-dependencies/ ./
 COPY --from=extractor /app/extracted/application/           ./
 
-EXPOSE 8081
+EXPOSE 8083
 
 ENTRYPOINT ["java", \
   "-XX:+UseContainerSupport", \

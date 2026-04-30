@@ -56,7 +56,7 @@ jobs:
     #               retention-days: 7
 
     # ──────────────────────────────────────────────────────────────────────────
-    # 2. Build & push — parallel matrix across all 3 services
+    # 2. Build & push — parallel matrix across all 5 services
     # ──────────────────────────────────────────────────────────────────────────
     build-and-push:
         name: Build & Push (${{ matrix.service }})
@@ -69,6 +69,8 @@ jobs:
                     - auth-service
                     - user-service
                     - api-gateway
+                    - crate-service
+                    - sync-service
 
         steps:
             - uses: actions/checkout@v4

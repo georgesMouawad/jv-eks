@@ -1,2 +1,3 @@
 CREATE DATABASE user_db;
 CREATE DATABASE auth_db;
+CREATE DATABASE crate_db;

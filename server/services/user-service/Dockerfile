@@ -11,6 +11,8 @@ RUN chmod +x gradlew && ./gradlew dependencies --no-daemon -q 2>/dev/null || tru
 COPY services/auth-service/build.gradle.kts  ./services/auth-service/build.gradle.kts
 COPY services/user-service/build.gradle.kts  ./services/user-service/build.gradle.kts
 COPY services/api-gateway/build.gradle.kts   ./services/api-gateway/build.gradle.kts
+COPY services/crate-service/build.gradle.kts ./services/crate-service/build.gradle.kts
+COPY services/sync-service/build.gradle.kts  ./services/sync-service/build.gradle.kts
 COPY services/user-service/src/ services/user-service/src/
 RUN ./gradlew :services:user-service:bootJar --no-daemon -x test
 
