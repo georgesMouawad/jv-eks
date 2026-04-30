@@ -22,6 +22,7 @@ dependencies {
 	// WebFlux provides reactive WebSocket support (non-blocking, better for
 	// many concurrent persistent connections)
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	implementation("org.springframework.boot:spring-boot-starter-security")
 	// Lettuce (included in data-redis) provides the reactive connection factory
 	// used by ReactiveStringRedisTemplate for channel subscriptions
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
