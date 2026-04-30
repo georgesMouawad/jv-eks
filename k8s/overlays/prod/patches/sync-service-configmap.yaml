@@ -1,0 +1,8 @@
+# Strategic merge patch — prod Redis endpoint.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: sync-service-config
+    namespace: jv-eks
+data:
+    SPRING_DATA_REDIS_HOST: <REDIS_ENDPOINT_PROD>

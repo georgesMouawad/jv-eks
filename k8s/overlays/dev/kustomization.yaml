@@ -21,9 +21,21 @@ images:
     - name: api-gateway
       newName: 648597472109.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-dev/api-gateway
       newTag: latest
+    - name: crate-service
+      newName: 648597472109.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-dev/crate-service
+      newTag: latest
+    - name: sync-service
+      newName: 648597472109.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-dev/sync-service
+      newTag: latest
+    - name: client
+      newName: 648597472109.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-dev/client
+      newTag: latest
 
 # ── Patches — environment-specific ConfigMap values and Ingress host ──────────
 patches:
     - path: patches/auth-service-configmap.yaml
     - path: patches/user-service-configmap.yaml
     - path: patches/api-gateway-ingress.yaml
+    - path: patches/crate-service-configmap.yaml
+    - path: patches/sync-service-configmap.yaml
+    - path: patches/crate-service-serviceaccount.yaml

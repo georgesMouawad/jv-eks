@@ -19,9 +19,21 @@ images:
     - name: api-gateway
       newName: <ACCOUNT_ID_PROD>.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-prod/api-gateway
       newTag: latest
+    - name: crate-service
+      newName: <ACCOUNT_ID_PROD>.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-prod/crate-service
+      newTag: latest
+    - name: sync-service
+      newName: <ACCOUNT_ID_PROD>.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-prod/sync-service
+      newTag: latest
+    - name: client
+      newName: <ACCOUNT_ID_PROD>.dkr.ecr.eu-central-1.amazonaws.com/jv-eks-prod/client
+      newTag: latest
 
 # ── Patches ───────────────────────────────────────────────────────────────────
 patches:
     - path: patches/auth-service-configmap.yaml
     - path: patches/user-service-configmap.yaml
     - path: patches/api-gateway-ingress.yaml
+    - path: patches/crate-service-configmap.yaml
+    - path: patches/sync-service-configmap.yaml
+    - path: patches/crate-service-serviceaccount.yaml

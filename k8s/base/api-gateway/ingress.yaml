@@ -11,6 +11,23 @@ spec:
         - host: api.jv-eks.local
           http:
               paths:
+                  # WebSocket route — must be listed before the catch-all /api prefix
+                  # so Traefik matches it first. The websocket middleware passes the
+                  # Upgrade/Connection headers required for WS handshakes.
+                  - path: /ws/sync
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: sync-service
+                            port:
+                                number: 8084
+                  - path: /api/crates
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: crate-service
+                            port:
+                                number: 8083
                   - path: /
                     pathType: Prefix
                     backend:

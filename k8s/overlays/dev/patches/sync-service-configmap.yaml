@@ -1,0 +1,9 @@
+# Strategic merge patch — replace placeholder with real Redis endpoint.
+# SPRING_DATA_REDIS_HOST: use `tofu output redis_endpoint`
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: sync-service-config
+    namespace: jv-eks
+data:
+    SPRING_DATA_REDIS_HOST: <REDIS_ENDPOINT_DEV>

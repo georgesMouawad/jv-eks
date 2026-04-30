@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: sync-service
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: sync-service
+    template:
+        metadata:
+            labels:
+                app: sync-service
+        spec:
+            containers:
+                - name: sync-service
+                  image: sync-service:latest
+                  ports:
+                      - containerPort: 8084
+                  envFrom:
+                      - configMapRef:
+                            name: sync-service-config
+                  livenessProbe:
+                      httpGet:
+                          path: /actuator/health/liveness
+                          port: 8084
+                      initialDelaySeconds: 30
+                      periodSeconds: 15
+                      failureThreshold: 3
+                  readinessProbe:
+                      httpGet:
+                          path: /actuator/health/readiness
+                          port: 8084
+                      initialDelaySeconds: 15
+                      periodSeconds: 10
+                      failureThreshold: 3
+                  resources:
+                      requests:
+                          cpu: 64m
+                          memory: 128Mi
+                      limits:
+                          cpu: 250m
+                          memory: 256Mi

@@ -1,0 +1,12 @@
+# Strategic merge patch — prod infrastructure endpoints.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: crate-service-config
+    namespace: jv-eks
+data:
+    SPRING_DATASOURCE_URL: jdbc:postgresql://<RDS_ENDPOINT_PROD>:5432/crate_db
+    SPRING_DATASOURCE_USERNAME: postgres
+    DB_HOST: <RDS_ENDPOINT_PROD>
+    SPRING_DATA_REDIS_HOST: <REDIS_ENDPOINT_PROD>
+    AWS_S3_BUCKET_NAME: <CRATESYNC_BUCKET_NAME_PROD>

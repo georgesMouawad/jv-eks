@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: crate-service-config
+data:
+    SPRING_APPLICATION_NAME: crate-service
+    SERVER_PORT: '8083'
+    SPRING_DOCKER_COMPOSE_ENABLED: 'false'
+    SPRING_JPA_HIBERNATE_DDL_AUTO: none
+    MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,prometheus
+    MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: 'true'
+    # Overridden per environment in overlays
+    SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/crate_db
+    SPRING_DATASOURCE_USERNAME: postgres
+    DB_HOST: localhost
+    SPRING_DATA_REDIS_HOST: localhost
+    SPRING_DATA_REDIS_PORT: '6379'
+    AWS_REGION: eu-central-1
+    AWS_S3_BUCKET_NAME: placeholder-cratesync-audio-assets

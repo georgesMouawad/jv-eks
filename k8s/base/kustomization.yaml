@@ -8,4 +8,6 @@ resources:
     - auth-service/
     - user-service/
     - api-gateway/
+    - crate-service/
+    - sync-service/
     - monitoring/

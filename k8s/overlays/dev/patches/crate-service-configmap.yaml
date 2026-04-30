@@ -1,0 +1,15 @@
+# Strategic merge patch — replace placeholder values with real infrastructure endpoints.
+# SPRING_DATASOURCE_URL: use `tofu output rds_endpoint` (strip the :5432 port suffix)
+# SPRING_DATA_REDIS_HOST: use `tofu output redis_endpoint`
+# AWS_S3_BUCKET_NAME: use `tofu output cratesync_audio_assets_bucket`
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: crate-service-config
+    namespace: jv-eks
+data:
+    SPRING_DATASOURCE_URL: jdbc:postgresql://jv-eks-dev-postgres.clm4y422ao00.eu-central-1.rds.amazonaws.com:5432/crate_db
+    SPRING_DATASOURCE_USERNAME: postgres
+    DB_HOST: jv-eks-dev-postgres.clm4y422ao00.eu-central-1.rds.amazonaws.com
+    SPRING_DATA_REDIS_HOST: <REDIS_ENDPOINT_DEV>
+    AWS_S3_BUCKET_NAME: <CRATESYNC_BUCKET_NAME_DEV>

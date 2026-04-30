@@ -5,3 +5,5 @@ resources:
     - auth-service-monitor.yaml
     - user-service-monitor.yaml
     - api-gateway-monitor.yaml
+    - crate-service-monitor.yaml
+    - sync-service-monitor.yaml

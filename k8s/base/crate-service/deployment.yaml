@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: crate-service
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: crate-service
+    template:
+        metadata:
+            labels:
+                app: crate-service
+        spec:
+            serviceAccountName: crate-service # IRSA — grants S3 access via EKS OIDC
+            containers:
+                - name: crate-service
+                  image: crate-service:latest
+                  ports:
+                      - containerPort: 8083
+                  envFrom:
+                      - configMapRef:
+                            name: crate-service-config
+                  env:
+                      - name: SPRING_DATASOURCE_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: db-secret
+                                key: SPRING_DATASOURCE_PASSWORD
+                      - name: JWT_SECRET
+                        valueFrom:
+                            secretKeyRef:
+                                name: jwt-secret
+                                key: JWT_SECRET
+                  livenessProbe:
+                      httpGet:
+                          path: /actuator/health/liveness
+                          port: 8083
+                      initialDelaySeconds: 60
+                      periodSeconds: 15
+                      failureThreshold: 3
+                  readinessProbe:
+                      httpGet:
+                          path: /actuator/health/readiness
+                          port: 8083
+                      initialDelaySeconds: 30
+                      periodSeconds: 10
+                      failureThreshold: 3
+                  resources:
+                      requests:
+                          cpu: 128m
+                          memory: 256Mi
+                      limits:
+                          cpu: 500m
+                          memory: 512Mi
