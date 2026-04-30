@@ -188,3 +188,17 @@ resource "helm_release" "kube_prometheus_stack" {
   # Traefik must be running before the ingress is created.
   depends_on = [module.eks, helm_release.traefik]
 }
+
+# ── Metrics Server ────────────────────────────────────────────────────────────
+# Required by HPA to read CPU/memory metrics from pods.
+# EKS does not ship metrics-server by default.
+resource "helm_release" "metrics_server" {
+  name             = "metrics-server"
+  repository       = "https://kubernetes-sigs.github.io/metrics-server/"
+  chart            = "metrics-server"
+  version          = "3.12.2"
+  namespace        = "kube-system"
+  create_namespace = false
+
+  depends_on = [module.eks]
+}
