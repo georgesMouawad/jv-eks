@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+    name: auth-service
+    labels:
+        app: auth-service
+spec:
+    # Match services in the jv-eks namespace only
+    namespaceSelector:
+        matchNames:
+            - jv-eks
+    selector:
+        matchLabels:
+            app: auth-service
+    endpoints:
+        - port: http
+          path: /actuator/prometheus
+          interval: 30s
+          scrapeTimeout: 10s

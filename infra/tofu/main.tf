@@ -131,3 +131,60 @@ resource "helm_release" "argocd" {
 
   depends_on = [module.eks]
 }
+
+# ── Observability: Prometheus + Grafana ───────────────────────────────────────
+# kube-prometheus-stack bundles: Prometheus, Alertmanager, Grafana, and the
+# Prometheus Operator with CRDs (ServiceMonitor, PrometheusRule, etc.).
+# Services in k8s/base/monitoring/ use ServiceMonitor resources to register
+# scrape targets without touching the Prometheus config directly.
+resource "helm_release" "kube_prometheus_stack" {
+  name             = "kube-prometheus-stack"
+  repository       = "https://prometheus-community.github.io/helm-charts"
+  chart            = "kube-prometheus-stack"
+  version          = "84.4.0"
+  namespace        = "monitoring"
+  create_namespace = true
+
+  # kube-prometheus-stack installs CRDs + 6 deployments; needs more than the
+  # default 5-minute Helm timeout on t3a.medium SPOT nodes.
+  timeout = 600
+
+  values = [
+    yamlencode({
+      prometheus = {
+        prometheusSpec = {
+          # Discover ServiceMonitors in any namespace, not just those with the
+          # Helm release label. Required to scrape our app services in jv-eks.
+          serviceMonitorSelectorNilUsesHelmValues = false
+          serviceMonitorNamespaceSelector         = {}
+          serviceMonitorSelector                  = {}
+        }
+      }
+      grafana = {
+        adminPassword = var.grafana_admin_password
+        ingress = {
+          enabled          = true
+          ingressClassName = "traefik"
+          hosts            = ["grafana.jv-eks.dev"]
+          annotations = {
+            "traefik.ingress.kubernetes.io/router.entrypoints" = "web"
+          }
+        }
+      }
+      # Disable admission webhooks and operator TLS — the webhook setup job
+      # creates a TLS secret the operator mounts; without it the operator pod
+      # gets stuck in ContainerCreating. Safe to disable in non-production.
+      prometheusOperator = {
+        tls = {
+          enabled = false
+        }
+        admissionWebhooks = {
+          enabled = false
+        }
+      }
+    })
+  ]
+
+  # Traefik must be running before the ingress is created.
+  depends_on = [module.eks, helm_release.traefik]
+}

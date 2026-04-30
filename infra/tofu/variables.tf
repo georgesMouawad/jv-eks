@@ -114,6 +114,13 @@ variable "rds_password" {
   sensitive   = true
 }
 
+# ── Grafana ───────────────────────────────────────────────────────────────────
+variable "grafana_admin_password" {
+  description = "Admin password for the Grafana dashboard."
+  type        = string
+  sensitive   = true
+}
+
 # ── ECR ──────────────────────────────────────────────────────────────────────
 variable "ecr_image_retention_count" {
   description = "Number of images to keep per ECR repository."

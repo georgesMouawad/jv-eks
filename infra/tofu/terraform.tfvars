@@ -26,5 +26,8 @@ rds_db_name           = "appdb"
 rds_username          = "postgres"
 # rds_password must be supplied via TF_VAR_rds_password env var or -var flag — never commit it.
 
+# ── Grafana ───────────────────────────────────────────────────────────────────
+# grafana_admin_password must be supplied via TF_VAR_grafana_admin_password env var — never commit it.
+
 # ── ECR ──────────────────────────────────────────────────────────────────────
 ecr_image_retention_count = 3
