@@ -51,6 +51,13 @@ sed -i "s|<RDS_ENDPOINT>|${RDS_ENDPOINT}|g" \
   "${OVERLAY}/patches/user-service-configmap.yaml"
 
 # ── 3. Fetch and commit the Sealed Secrets public cert ───────────────────────
+# Wait for the controller to be fully running before fetching its cert.
+# On a fresh cluster this can take 60-90 s while the node group pulls the image.
+echo "==> Waiting for Sealed Secrets controller to be ready..."
+kubectl rollout status deployment/sealed-secrets \
+  --namespace kube-system \
+  --timeout=180s
+
 echo "==> Fetching Sealed Secrets public cert..."
 kubeseal \
   --controller-namespace kube-system \
