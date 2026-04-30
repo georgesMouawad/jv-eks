@@ -15,9 +15,9 @@ github_repo = "jv-eks"
 
 eks_kubernetes_version  = "1.33"
 eks_node_instance_types = ["t3a.medium"] # multiple types improves spot availability
-eks_node_desired        = 1
+eks_node_desired        = 2
 eks_node_min            = 1
-eks_node_max            = 1
+eks_node_max            = 2
 
 # ── RDS ──────────────────────────────────────────────────────────────────────
 rds_instance_class    = "db.t3.micro"
