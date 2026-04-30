@@ -65,12 +65,27 @@ jobs:
 
         strategy:
             matrix:
-                service:
-                    - auth-service
-                    - user-service
-                    - api-gateway
-                    - crate-service
-                    - sync-service
+                include:
+                    # ── Backend services (built from server/ root for multi-module Gradle) ──
+                    - service: auth-service
+                      context: server
+                      dockerfile: server/services/auth-service/Dockerfile
+                    - service: user-service
+                      context: server
+                      dockerfile: server/services/user-service/Dockerfile
+                    - service: api-gateway
+                      context: server
+                      dockerfile: server/services/api-gateway/Dockerfile
+                    - service: crate-service
+                      context: server
+                      dockerfile: server/services/crate-service/Dockerfile
+                    - service: sync-service
+                      context: server
+                      dockerfile: server/services/sync-service/Dockerfile
+                    # ── Frontend ────────────────────────────────────────────────────────────
+                    - service: client
+                      context: client
+                      dockerfile: client/Dockerfile
 
         steps:
             - uses: actions/checkout@v4
@@ -86,7 +101,6 @@ jobs:
               uses: aws-actions/amazon-ecr-login@v2
 
             - name: Build and push image
-              working-directory: server
               env:
                   REGISTRY: ${{ steps.login-ecr.outputs.registry }}
                   REPO: jv-eks-dev/${{ matrix.service }}
@@ -96,10 +110,10 @@ jobs:
                   IMAGE="${REGISTRY}/${REPO}"
 
                   docker build \
-                    -f services/${{ matrix.service }}/Dockerfile \
+                    -f ${{ matrix.dockerfile }} \
                     -t "${IMAGE}:${SHORT_SHA}" \
                     -t "${IMAGE}:latest" \
-                    .
+                    ${{ matrix.context }}
 
                   docker push "${IMAGE}:${SHORT_SHA}"
                   docker push "${IMAGE}:latest"
