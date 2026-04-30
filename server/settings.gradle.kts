@@ -11,3 +11,5 @@ rootProject.name = "server"
 include("services:auth-service")
 include("services:user-service")
 include("services:api-gateway")
+include("services:crate-service")
+include("services:sync-service")
