@@ -8,6 +8,7 @@
 
 rootProject.name = "server"
 
+include("libs:common")
 include("services:auth-service")
 include("services:user-service")
 include("services:api-gateway")
