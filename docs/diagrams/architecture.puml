@@ -28,9 +28,9 @@ skinparam rectangle {
     BorderColor #1E88E5
 }
 
-title Production-Grade DevOps Platform — High-Level Architecture
+title MusicSync Platform — High-Level Architecture
 
-actor "Client" as client
+' actor "Client" as client
 
 cloud "AWS — eu-central-1" {
 
@@ -44,7 +44,7 @@ cloud "AWS — eu-central-1" {
 
         rectangle "Private Subnets (10.0.11.0/24, 10.0.12.0/24)" {
 
-            node "EKS Node Group\n(t3a.medium SPOT)" {
+            node "EKS Node Group" {
                 rectangle "Namespace: jv-eks" {
                     component "API Gateway\n:8080" as gw
                     component "Auth Service\n:8081" as auth
@@ -80,41 +80,41 @@ rectangle "GitHub" {
     component "GitHub Actions\n(CI/CD)" as ci
 }
 
-' Traffic flow
-client --> lb : HTTPS/HTTP
-lb --> traefik
-traefik --> gw : /api/*
-gw --> auth : /api/auth/**
-gw --> user : /api/users/**
+' ' Traffic flow
+' client --> lb : HTTPS/HTTP
+' lb --> traefik
+' traefik --> gw : /api/*
+' gw --> auth : /api/auth/**
+' gw --> user : /api/users/**
 
-' Data
-auth --> rds : JDBC :5432 (auth_db)
-user --> rds : JDBC :5432 (user_db)
+' ' Data
+' auth --> rds : JDBC :5432 (auth_db)
+' user --> rds : JDBC :5432 (user_db)
 
-' GitOps
-ci --> ecr : docker push
-ci --> repo : commit newTag [skip ci]
-argocd --> repo : poll / webhook
-argocd --> traefik : kubectl apply
-argocd --> gw : kubectl apply
-argocd --> auth : kubectl apply
-argocd --> user : kubectl apply
+' ' GitOps
+' ci --> ecr : docker push
+' ci --> repo : commit newTag [skip ci]
+' argocd --> repo : poll / webhook
+' argocd --> traefik : kubectl apply
+' argocd --> gw : kubectl apply
+' argocd --> auth : kubectl apply
+' argocd --> user : kubectl apply
 
-' Secrets
-ss --> auth : decrypt → Secret
-ss --> user : decrypt → Secret
+' ' Secrets
+' ss --> auth : decrypt → Secret
+' ss --> user : decrypt → Secret
 
-' Observability
-prom --> auth : scrape /actuator/prometheus
-prom --> user : scrape /actuator/prometheus
-prom --> gw   : scrape /actuator/prometheus
-grafana --> prom : query
+' ' Observability
+' prom --> auth : scrape /actuator/prometheus
+' prom --> user : scrape /actuator/prometheus
+' prom --> gw   : scrape /actuator/prometheus
+' grafana --> prom : query
 
-' OIDC auth
-ci --> oidc : AssumeRoleWithWebIdentity
-oidc --> ecr : ECR PowerUser
+' ' OIDC auth
+' ci --> oidc : AssumeRoleWithWebIdentity
+' oidc --> ecr : ECR PowerUser
 
-' Egress
-nat --> rds : private routing
+' ' Egress
+' nat --> rds : private routing
 
 @enduml
