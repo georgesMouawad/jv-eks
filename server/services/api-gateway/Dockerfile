@@ -13,6 +13,8 @@ COPY services/user-service/build.gradle.kts  ./services/user-service/build.gradl
 COPY services/api-gateway/build.gradle.kts   ./services/api-gateway/build.gradle.kts
 COPY services/crate-service/build.gradle.kts ./services/crate-service/build.gradle.kts
 COPY services/sync-service/build.gradle.kts  ./services/sync-service/build.gradle.kts
+COPY libs/common/build.gradle.kts            ./libs/common/build.gradle.kts
+COPY libs/common/src/                        libs/common/src/
 COPY services/api-gateway/src/ services/api-gateway/src/
 RUN ./gradlew :services:api-gateway:bootJar --no-daemon -x test
 
