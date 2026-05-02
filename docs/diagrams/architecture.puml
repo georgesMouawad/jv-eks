@@ -30,9 +30,14 @@ skinparam rectangle {
 
 title MusicSync Platform — High-Level Architecture
 
-' actor "Client" as client
+actor "Client Browser" as client
 
 cloud "AWS — eu-central-1" {
+
+    rectangle "AWS Services" {
+        component "ECR\n(6 repositories / env)" as ecr
+        component "IAM OIDC Provider\n(GitHub Actions)" as oidc
+    }
 
     rectangle "VPC  10.0.0.0/16" {
 
@@ -49,12 +54,18 @@ cloud "AWS — eu-central-1" {
                     component "API Gateway\n:8080" as gw
                     component "Auth Service\n:8081" as auth
                     component "User Service\n:8082" as user
+                    component "Crate Service\n:8083" as crate
+                    component "Sync Service\n:8084" as sync
                 }
                 rectangle "Namespace: kube-system" {
-                    component "Traefik\n(Ingress)" as traefik
                     component "Sealed Secrets\nController" as ss
                     component "Metrics Server" as ms
                 }
+
+                rectangle "Namespace: Traefik" {
+                    component "Traefik\n(Ingress)" as traefik
+                }
+
                 rectangle "Namespace: argocd" {
                     component "ArgoCD" as argocd
                 }
@@ -65,13 +76,9 @@ cloud "AWS — eu-central-1" {
                 }
             }
 
-            database "RDS PostgreSQL 16\n(db.t3.micro, encrypted)" as rds
+            database "RDS PostgreSQL 16" as rds
+            database "ElastiCache Redis" as redis
         }
-    }
-
-    rectangle "AWS Services" {
-        component "ECR\n(3 repositories)" as ecr
-        component "IAM OIDC Provider\n(GitHub Actions)" as oidc
     }
 }
 
@@ -80,41 +87,52 @@ rectangle "GitHub" {
     component "GitHub Actions\n(CI/CD)" as ci
 }
 
-' ' Traffic flow
-' client --> lb : HTTPS/HTTP
-' lb --> traefik
-' traefik --> gw : /api/*
-' gw --> auth : /api/auth/**
-' gw --> user : /api/users/**
+' Traffic flow
+client --> lb : HTTPS/HTTP
+lb --> traefik
+traefik --> gw : /api/* + /ws/sync
+' note right of gw
+'     Gateway routes to backend services
+'     (auth, user, crate, sync)
+' end note
 
-' ' Data
-' auth --> rds : JDBC :5432 (auth_db)
-' user --> rds : JDBC :5432 (user_db)
+' Data
+auth --> rds : JDBC :5432 (auth_db)
+user --> rds : JDBC :5432 (user_db)
+crate --> rds : JDBC :5432 (crate_db)
+crate --> redis : cache + pub/sub
+sync --> redis : pub/sub
 
-' ' GitOps
+' GitOps
 ' ci --> ecr : docker push
 ' ci --> repo : commit newTag [skip ci]
-' argocd --> repo : poll / webhook
+argocd --> repo : poll / webhook
 ' argocd --> traefik : kubectl apply
 ' argocd --> gw : kubectl apply
 ' argocd --> auth : kubectl apply
 ' argocd --> user : kubectl apply
+' argocd --> crate : kubectl apply
+' argocd --> sync : kubectl apply
 
-' ' Secrets
-' ss --> auth : decrypt → Secret
-' ss --> user : decrypt → Secret
+' Secrets
+ss --> auth : decrypt -> Secret
+ss --> user : decrypt -> Secret
+ss --> crate : decrypt -> Secret
 
-' ' Observability
+' Observability
 ' prom --> auth : scrape /actuator/prometheus
 ' prom --> user : scrape /actuator/prometheus
 ' prom --> gw   : scrape /actuator/prometheus
+' prom --> crate : scrape /actuator/prometheus
+' prom --> sync : scrape /actuator/prometheus
 ' grafana --> prom : query
 
-' ' OIDC auth
-' ci --> oidc : AssumeRoleWithWebIdentity
-' oidc --> ecr : ECR PowerUser
+' OIDC auth
+ci --> oidc : AssumeRoleWithWebIdentity
+oidc --> ecr : ECR PowerUser
 
-' ' Egress
-' nat --> rds : private routing
+' Egress
+nat --> rds : private routing
+nat --> redis : private routing
 
 @enduml
