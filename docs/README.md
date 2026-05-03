@@ -95,8 +95,8 @@ All infrastructure is provisioned with **Terraform** (`infra/tofu/`). Sensitive 
 | **VPC**              | `10.0.0.0/16`, 2 public + 2 private subnets across `eu-central-1a/b`                            |
 | **Internet Gateway** | Public subnet egress                                                                            |
 | **NAT Gateway**      | Single AZ (cost-optimised) — private subnet egress                                              |
-| **EKS**              | K8s 1.33, `t3a.medium` SPOT nodes, 1–2 nodes, `API_AND_CONFIG_MAP` auth mode                    |
-| **RDS**              | PostgreSQL 16, `db.t3.micro`, 20 GB gp3, encrypted at rest, private subnet                      |
+| **EKS**              | K8s, 2 nodes, `API_AND_CONFIG_MAP` auth mode                    |
+| **RDS**              | PostgreSQL, gp3, encrypted at rest, private subnet                      |
 | **ECR**              | 3 repositories, retain last 3 images, untagged cleaned after 1 day                              |
 | **IAM**              | OIDC provider for `token.actions.githubusercontent.com` |
 
@@ -104,11 +104,11 @@ All infrastructure is provisioned with **Terraform** (`infra/tofu/`). Sensitive 
 
 | Release               | Chart                                               | Namespace   | Purpose                             |
 | --------------------- | --------------------------------------------------- | ----------- | ----------------------------------- |
-| traefik               | `traefik/traefik` 34.4.1                            | kube-system | Ingress + NLB                       |
-| sealed-secrets        | `bitnami/sealed-secrets` 2.17.3                     | kube-system | Secret decryption controller        |
-| argocd                | `argoproj/argo-cd` 7.8.26                           | argocd      | GitOps                              |
-| kube-prometheus-stack | `prometheus-community/kube-prometheus-stack` 84.4.0 | monitoring  | Prometheus + Grafana + Alertmanager |
-| metrics-server        | `metrics-server/metrics-server` 3.12.2              | kube-system | HPA CPU/memory metrics source       |
+| traefik               | `traefik/traefik`                                   | kube-system | Ingress + NLB                       |
+| sealed-secrets        | `bitnami/sealed-secrets`                            | kube-system | Secret decryption controller        |
+| argocd                | `argoproj/argo-cd`                                  | argocd      | GitOps                              |
+| kube-prometheus-stack | `prometheus-community/kube-prometheus-stack`        | monitoring  | Prometheus + Grafana + Alertmanager |
+| metrics-server        | `metrics-server/metrics-server`                     | kube-system | HPA CPU/memory metrics source       |
 
 ---
 
