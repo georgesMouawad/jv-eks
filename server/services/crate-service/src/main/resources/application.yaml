@@ -1,4 +1,6 @@
 spring:
+    main:
+        banner-mode: off
     application:
         name: crate-service
     docker:
@@ -39,3 +41,7 @@ management:
         health:
             probes:
                 enabled: true
+
+logging:
+    level:
+        root: WARN

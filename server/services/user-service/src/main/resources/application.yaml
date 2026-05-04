@@ -1,4 +1,6 @@
 spring:
+    main:
+        banner-mode: off
     application:
         name: user-service
     docker:
@@ -26,6 +28,10 @@ server:
 
 jwt:
     secret: dGhpcyBpcyBhIHZlcnkgbG9uZyBzZWNyZXQga2V5IGZvciBkZXZlbG9wbWVudA==
+
+logging:
+    level:
+        root: WARN
 
 management:
     endpoints:

@@ -1,4 +1,6 @@
 spring:
+    main:
+        banner-mode: off
     application:
         name: api-gateway
 
@@ -20,3 +22,7 @@ management:
         health:
             probes:
                 enabled: true
+
+logging:
+    level:
+        root: WARN
