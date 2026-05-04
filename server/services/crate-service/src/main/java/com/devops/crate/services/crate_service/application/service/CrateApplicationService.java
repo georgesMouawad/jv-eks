@@ -39,7 +39,7 @@ public class CrateApplicationService implements CrateUseCase {
     @Override
     public CrateResponse createCrate(CreateCrateRequest request, UUID ownerId) {
         Crate saved = crateRepository.save(Crate.create(request.name(), ownerId));
-        return toResponse(saved, List.of());
+        return CrateResponse.from(saved, List.of());
     }
 
     @Override
@@ -48,7 +48,7 @@ public class CrateApplicationService implements CrateUseCase {
         Crate crate = crateRepository.findById(crateId)
                 .orElseThrow(() -> new CrateNotFoundException(crateId));
         List<CrateItem> items = crateItemRepository.findByCrateId(crateId);
-        return toResponse(crate, items);
+        return CrateResponse.from(crate, items);
     }
 
     @Override
@@ -69,26 +69,6 @@ public class CrateApplicationService implements CrateUseCase {
                 CrateItem.create(crateId, request.trackName(), request.s3Key(), addedBy));
         // Notify all clients subscribed to this crate via Redis Pub/Sub
         eventPublisher.publishTrackAdded(crateId, saved);
-        return toItemResponse(saved);
-    }
-
-    // ── Mappers ───────────────────────────────────────────────────────────────
-
-    private CrateResponse toResponse(Crate crate, List<CrateItem> items) {
-        return new CrateResponse(
-                crate.getId(),
-                crate.getName(),
-                crate.getOwnerId(),
-                crate.getCreatedAt(),
-                items.stream().map(this::toItemResponse).toList());
-    }
-
-    private CrateItemResponse toItemResponse(CrateItem item) {
-        return new CrateItemResponse(
-                item.getId(),
-                item.getTrackName(),
-                item.getS3Key(),
-                item.getAddedBy(),
-                item.getAddedAt());
+        return CrateItemResponse.from(saved);
     }
 }
