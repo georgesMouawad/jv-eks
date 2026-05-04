@@ -24,13 +24,17 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
-	implementation(project(":libs:common"))
+	implementation("org.springframework.boot:spring-boot-starter-flyway")
 	implementation("software.amazon.awssdk:s3:2.31.0")
-	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
+
+	implementation(project(":libs:common"))
+	
 	runtimeOnly("org.postgresql:postgresql")
-	implementation("org.flywaydb:flyway-core")
 	runtimeOnly("org.flywaydb:flyway-database-postgresql")
+	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
