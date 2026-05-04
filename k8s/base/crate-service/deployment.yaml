@@ -13,6 +13,31 @@ spec:
                 app: crate-service
         spec:
             serviceAccountName: crate-service # IRSA — grants S3 access via EKS OIDC
+            initContainers:
+                - name: check-db-ready
+                  image: postgres:16-alpine
+                  command: ['sh', '-c', 'until pg_isready -h $(DB_HOST); do echo "waiting for postgres..."; sleep 2; done']
+                  envFrom:
+                      - configMapRef:
+                            name: crate-service-config
+                - name: create-db
+                  image: postgres:16-alpine
+                  command:
+                      - sh
+                      - -c
+                      - |
+                          psql "postgresql://$(SPRING_DATASOURCE_USERNAME):$(SPRING_DATASOURCE_PASSWORD)@$(DB_HOST)/postgres" \
+                            -c "CREATE DATABASE crate_db;" 2>/dev/null \
+                            || echo "crate_db already exists, continuing"
+                  envFrom:
+                      - configMapRef:
+                            name: crate-service-config
+                  env:
+                      - name: SPRING_DATASOURCE_PASSWORD
+                        valueFrom:
+                            secretKeyRef:
+                                name: db-secret
+                                key: SPRING_DATASOURCE_PASSWORD
             containers:
                 - name: crate-service
                   image: crate-service:latest
