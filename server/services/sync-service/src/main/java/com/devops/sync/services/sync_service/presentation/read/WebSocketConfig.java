@@ -1,6 +1,6 @@
-package com.devops.sync.services.sync_service.web.config;
+package com.devops.sync.services.sync_service.presentation.read;
 
-import com.devops.sync.services.sync_service.web.handler.SyncWebSocketHandler;
+import com.devops.sync.services.sync_service.presentation.read.SyncWebSocketHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.HandlerMapping;

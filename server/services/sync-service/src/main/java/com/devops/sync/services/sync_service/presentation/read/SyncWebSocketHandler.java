@@ -1,4 +1,4 @@
-package com.devops.sync.services.sync_service.web.handler;
+package com.devops.sync.services.sync_service.presentation.read;
 
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.stereotype.Component;
@@ -25,7 +25,7 @@ public class SyncWebSocketHandler implements WebSocketHandler {
         String crateId = path.substring(path.lastIndexOf('/') + 1);
 
         // Subscribe to the Redis Pub/Sub channel for this crate.
-        // Each message published by the crate-service (RedisEventPublisher)
+        // Each message published by the crate-service (CrateEventPublisherImpl)
         // is forwarded as a WebSocket text frame to this client.
         // The Flux completes (and the WebSocket closes) when the Redis
         // subscription is cancelled or the connection is dropped.

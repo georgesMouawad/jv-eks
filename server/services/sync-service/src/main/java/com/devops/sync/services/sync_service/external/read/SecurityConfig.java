@@ -1,4 +1,4 @@
-package com.devops.sync.services.sync_service.infrastructure.security;
+package com.devops.sync.services.sync_service.external.read;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
