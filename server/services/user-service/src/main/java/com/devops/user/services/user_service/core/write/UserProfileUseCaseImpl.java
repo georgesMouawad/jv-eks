@@ -1,14 +1,14 @@
-package com.devops.user.services.user_service.application.service;
+package com.devops.user.services.user_service.core.write;
 
-import com.devops.user.services.user_service.application.dto.CreateUserProfileRequest;
-import com.devops.user.services.user_service.application.dto.UpdateUserProfileRequest;
-import com.devops.user.services.user_service.application.dto.UserProfileResponse;
-import com.devops.user.services.user_service.application.port.in.UserProfileUseCase;
-import com.devops.user.services.user_service.domain.exception.UnauthorizedException;
-import com.devops.user.services.user_service.domain.exception.UserProfileAlreadyExistsException;
-import com.devops.user.services.user_service.domain.exception.UserProfileNotFoundException;
-import com.devops.user.services.user_service.domain.model.UserProfile;
-import com.devops.user.services.user_service.domain.repository.UserProfileRepository;
+import com.devops.user.services.user_service.presentation.write.dto.CreateUserProfileRequest;
+import com.devops.user.services.user_service.presentation.write.dto.UpdateUserProfileRequest;
+import com.devops.user.services.user_service.presentation.read.dto.UserProfileResponse;
+import com.devops.user.services.user_service.core.write.UserProfileUseCase;
+import com.devops.user.services.user_service.core.domain.exceptions.UnauthorizedException;
+import com.devops.user.services.user_service.core.domain.exceptions.UserProfileAlreadyExistsException;
+import com.devops.user.services.user_service.core.domain.exceptions.UserProfileNotFoundException;
+import com.devops.user.services.user_service.core.domain.UserProfile;
+import com.devops.user.services.user_service.core.read.UserProfileRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,11 +16,11 @@ import java.util.UUID;
 
 @Service
 @Transactional
-public class UserProfileApplicationService implements UserProfileUseCase {
+public class UserProfileUseCaseImpl implements UserProfileUseCase {
 
     private final UserProfileRepository profileRepository;
 
-    public UserProfileApplicationService(UserProfileRepository profileRepository) {
+    public UserProfileUseCaseImpl(UserProfileRepository profileRepository) {
         this.profileRepository = profileRepository;
     }
 

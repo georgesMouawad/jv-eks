@@ -1,6 +1,6 @@
-package com.devops.user.services.user_service.domain.repository;
+package com.devops.user.services.user_service.core.read;
 
-import com.devops.user.services.user_service.domain.model.UserProfile;
+import com.devops.user.services.user_service.core.domain.UserProfile;
 
 import java.util.Optional;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package com.devops.user.services.user_service.domain.exception;
+package com.devops.user.services.user_service.core.domain.exceptions;
 
 public class UnauthorizedException extends RuntimeException {
 

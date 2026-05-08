@@ -1,7 +1,8 @@
-package com.devops.user.services.user_service.infrastructure.persistence;
+package com.devops.user.services.user_service.infra.write;
 
-import com.devops.user.services.user_service.domain.model.UserProfile;
-import com.devops.user.services.user_service.domain.repository.UserProfileRepository;
+import com.devops.user.services.user_service.core.domain.UserProfile;
+import com.devops.user.services.user_service.core.read.UserProfileRepository;
+import com.devops.user.services.user_service.infra.read.SpringDataUserProfileRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -11,11 +12,11 @@ import java.util.UUID;
  * Adapter: implements the domain repository port using Spring Data JPA.
  */
 @Repository
-public class UserProfilePersistenceAdapter implements UserProfileRepository {
+public class UserProfileRepositoryImpl implements UserProfileRepository {
 
     private final SpringDataUserProfileRepository jpaRepository;
 
-    public UserProfilePersistenceAdapter(SpringDataUserProfileRepository jpaRepository) {
+    public UserProfileRepositoryImpl(SpringDataUserProfileRepository jpaRepository) {
         this.jpaRepository = jpaRepository;
     }
 

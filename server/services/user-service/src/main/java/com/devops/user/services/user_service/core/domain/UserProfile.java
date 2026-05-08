@@ -1,4 +1,4 @@
-package com.devops.user.services.user_service.domain.model;
+package com.devops.user.services.user_service.core.domain;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

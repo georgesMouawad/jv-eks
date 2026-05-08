@@ -1,4 +1,4 @@
-package com.devops.user.services.user_service.application.dto;
+package com.devops.user.services.user_service.presentation.write.dto;
 
 import jakarta.validation.constraints.Size;
 

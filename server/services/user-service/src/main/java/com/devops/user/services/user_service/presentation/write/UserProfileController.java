@@ -1,9 +1,9 @@
-package com.devops.user.services.user_service.web.controller;
+package com.devops.user.services.user_service.presentation.write;
 
-import com.devops.user.services.user_service.application.dto.CreateUserProfileRequest;
-import com.devops.user.services.user_service.application.dto.UpdateUserProfileRequest;
-import com.devops.user.services.user_service.application.dto.UserProfileResponse;
-import com.devops.user.services.user_service.application.port.in.UserProfileUseCase;
+import com.devops.user.services.user_service.presentation.write.dto.CreateUserProfileRequest;
+import com.devops.user.services.user_service.presentation.write.dto.UpdateUserProfileRequest;
+import com.devops.user.services.user_service.presentation.read.dto.UserProfileResponse;
+import com.devops.user.services.user_service.core.write.UserProfileUseCase;
 import com.devops.common.security.JwtAuthentication;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

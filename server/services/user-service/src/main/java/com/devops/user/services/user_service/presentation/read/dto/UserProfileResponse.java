@@ -1,6 +1,6 @@
-package com.devops.user.services.user_service.application.dto;
+package com.devops.user.services.user_service.presentation.read.dto;
 
-import com.devops.user.services.user_service.domain.model.UserProfile;
+import com.devops.user.services.user_service.core.domain.UserProfile;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

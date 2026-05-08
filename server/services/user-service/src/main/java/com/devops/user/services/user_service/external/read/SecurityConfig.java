@@ -1,7 +1,8 @@
-package com.devops.user.services.user_service.infrastructure.security;
+package com.devops.user.services.user_service.external.read;
 
 import com.devops.common.security.JwtAuthenticationFilter;
 import com.devops.common.security.JwtVerifier;
+import com.devops.common.security.JwtVerifierImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +22,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(new JwtVerifier(jwtSecret));
+        JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(new JwtVerifierImpl(jwtSecret));
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

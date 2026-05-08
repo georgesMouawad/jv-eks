@@ -1,8 +1,8 @@
-package com.devops.user.services.user_service.web.exception;
+package com.devops.user.services.user_service.presentation.write;
 
-import com.devops.user.services.user_service.domain.exception.UnauthorizedException;
-import com.devops.user.services.user_service.domain.exception.UserProfileAlreadyExistsException;
-import com.devops.user.services.user_service.domain.exception.UserProfileNotFoundException;
+import com.devops.user.services.user_service.core.domain.exceptions.UnauthorizedException;
+import com.devops.user.services.user_service.core.domain.exceptions.UserProfileAlreadyExistsException;
+import com.devops.user.services.user_service.core.domain.exceptions.UserProfileNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
