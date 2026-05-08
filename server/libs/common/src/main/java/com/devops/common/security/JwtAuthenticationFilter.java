@@ -19,7 +19,7 @@ import java.util.UUID;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String BEARER_PREFIX = "Bearer ";
-
+    private static final String HEADER_AUTHORIZATION = "Authorization";
     private final JwtVerifier jwtService;
 
     public JwtAuthenticationFilter(JwtVerifier jwtService) {
@@ -31,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
-        String authHeader = request.getHeader("Authorization");
+        String authHeader = request.getHeader(HEADER_AUTHORIZATION);
 
         if (authHeader != null && authHeader.startsWith(BEARER_PREFIX)) {
             String token = authHeader.substring(BEARER_PREFIX.length());
@@ -39,9 +39,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (jwtService.isValid(token)) {
                 UUID userId = jwtService.extractUserId(token);
                 String email = jwtService.extractEmail(token);
-                String role = jwtService.extractRole(token);
+                var authorities = jwtService.extractAuthorities(token);
 
-                JwtAuthentication authentication = new JwtAuthentication(userId, email, role);
+                JwtAuthentication authentication = new JwtAuthentication(userId, email, authorities);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }

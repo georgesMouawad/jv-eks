@@ -3,8 +3,10 @@ package com.devops.common.security;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Represents an authenticated principal derived from a validated JWT.
@@ -14,8 +16,10 @@ public class JwtAuthentication extends AbstractAuthenticationToken {
     private final UUID userId;
     private final String email;
 
-    public JwtAuthentication(UUID userId, String email, String role) {
-        super(List.of(new SimpleGrantedAuthority("ROLE_" + role)));
+    public JwtAuthentication(UUID userId, String email, Collection<String> authorities) {
+        super(authorities.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList()));
         this.userId = userId;
         this.email = email;
         setAuthenticated(true);
