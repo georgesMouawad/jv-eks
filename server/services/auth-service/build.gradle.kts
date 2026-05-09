@@ -13,6 +13,17 @@ java {
 	}
 }
 
+tasks.test {
+    testLogging {
+        events("passed", "skipped", "failed")
+        showStandardStreams = true 
+    }
+//     jvmArgs(
+//         "-XX:+EnableDynamicAgentLoading",
+//         "-Djdk.instrument.traceUsage=false"
+//     )
+}
+
 repositories {
 	mavenCentral()
 }
@@ -38,6 +49,7 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 
+	testRuntimeOnly("com.h2database:h2")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
