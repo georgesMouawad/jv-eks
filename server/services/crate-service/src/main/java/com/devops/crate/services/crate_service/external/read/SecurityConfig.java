@@ -1,7 +1,6 @@
 package com.devops.crate.services.crate_service.external.read;
 
 import com.devops.common.security.JwtAuthenticationFilter;
-import com.devops.common.security.JwtVerifier;
 import com.devops.common.security.JwtVerifierImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

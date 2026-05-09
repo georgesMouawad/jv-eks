@@ -3,7 +3,6 @@ package com.devops.user.services.user_service.core.write;
 import com.devops.user.services.user_service.presentation.write.dto.CreateUserProfileRequest;
 import com.devops.user.services.user_service.presentation.write.dto.UpdateUserProfileRequest;
 import com.devops.user.services.user_service.presentation.read.dto.UserProfileResponse;
-import com.devops.user.services.user_service.core.write.UserProfileUseCase;
 import com.devops.user.services.user_service.core.domain.exceptions.UnauthorizedException;
 import com.devops.user.services.user_service.core.domain.exceptions.UserProfileAlreadyExistsException;
 import com.devops.user.services.user_service.core.domain.exceptions.UserProfileNotFoundException;
