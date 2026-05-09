@@ -6,6 +6,13 @@
  * This project uses @Incubating APIs which are subject to change.
  */
 
+pluginManagement {
+	repositories {
+		gradlePluginPortal()
+		mavenCentral()
+	}
+}
+
 rootProject.name = "server"
 
 include("libs:common")
