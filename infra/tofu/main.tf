@@ -35,7 +35,6 @@ module "eks" {
   node_desired            = var.eks_node_desired
   node_min                = var.eks_node_min
   node_max                = var.eks_node_max
-  github_actions_role_arn = module.iam.github_actions_role_arn
 }
 
 # ── RDS ──────────────────────────────────────────────────────────────────────
